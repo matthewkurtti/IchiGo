@@ -8,13 +8,11 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GameScreen implements Screen {
     final Ichigo game;
@@ -22,15 +20,16 @@ public class GameScreen implements Screen {
     Texture backgroundTexture;
     Texture runnerTexture;
     Texture strawberryTexture;
+    Texture heartTexture;
     Sound hitSound;
     Music runningMusic;
     Sprite runnerSprite;
-//    SpriteBatch spriteBatch;
-//    FitViewport viewport;
+    int healthCounter;
 
     Vector2 touchPos;
 
     Array<Sprite> strawberrySprites;
+    Array<Sprite> heartSprites;
 
     float strawberryTimer;
 
@@ -45,6 +44,7 @@ public class GameScreen implements Screen {
         backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         runnerTexture = new Texture("runner.png");
         strawberryTexture = new Texture("strawberry.png");
+        heartTexture = new Texture("heart.png");
 
         // load hit sound effect and background music
         hitSound = Gdx.audio.newSound(Gdx.files.internal("punch-2-37333.mp3"));
@@ -62,11 +62,13 @@ public class GameScreen implements Screen {
         strawberryRectangle = new Rectangle();
 
         strawberrySprites = new Array<>();
+        heartSprites = new Array<>();
+        healthCounter = 5;
     }
 
     @Override
     public void show() {
-        runningMusic.play();
+//        runningMusic.play();
     }
 
     @Override
@@ -77,13 +79,17 @@ public class GameScreen implements Screen {
     }
 
     private void input(){
-        float speed = 6f;
+        float speed = 7f;
         float delta = Gdx.graphics.getDeltaTime();
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             runnerSprite.translateY(speed * delta); // move the runner up
         } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            runnerSprite.translateY(-speed * delta); // move the bucket left
+            runnerSprite.translateY(-speed * delta); // move the runner down
+        }else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            runnerSprite.translateX(-speed * delta); // move the runner left
+        }else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            runnerSprite.translateX(speed * delta); // move the runner right
         }
 
         if (Gdx.input.isTouched()) {
@@ -102,8 +108,11 @@ public class GameScreen implements Screen {
         float runnerWidth = runnerSprite.getWidth();
         float runnerHeight = runnerSprite.getHeight();
 
-        // Clamp x to values between 0 and worldWidth
-        runnerSprite.setY(MathUtils.clamp(runnerSprite.getY(), 0.7f, worldHeight - runnerHeight - 3.5f)); // 3.5f added to keep runner on track
+        // Clamp y to values between the race tracks
+        runnerSprite.setY(MathUtils.clamp(runnerSprite.getY(), 0.7f, worldHeight - runnerHeight - 3.5f));
+
+        // clamp x to values on the screen
+        runnerSprite.setX(MathUtils.clamp(runnerSprite.getX(), 0, worldWidth - runnerWidth));
 
         float delta = Gdx.graphics.getDeltaTime(); // retrieve the current delta
 
@@ -117,7 +126,7 @@ public class GameScreen implements Screen {
             float strawberryWidth = strawberrySprite.getWidth();
             float strawberryHeight = strawberrySprite.getHeight();
 
-            strawberrySprite.translateX(-2f * delta);
+            strawberrySprite.translateX(-4f * delta);
 
             // apply strawberry position and size to strawberry rectangle (hit box)
             strawberryRectangle.set(strawberrySprite.getX(), strawberrySprite.getY(), strawberryWidth, strawberryHeight);
@@ -126,17 +135,24 @@ public class GameScreen implements Screen {
 
             // if the top of the drop goes below the bottom of the view, remove it
             if (strawberrySprite.getX() < -strawberryWidth) strawberrySprites.removeIndex(i);
-            else if (runnerRectangle.overlaps(strawberryRectangle)) { // Check if the bucket overlaps the drop
-                strawberrySprites.removeIndex(i); // Remove the drop
+            else if (runnerRectangle.overlaps(strawberryRectangle)) { // Check if the runner overlaps the strawberry
+                strawberrySprites.removeIndex(i); // Remove the strawberry
                 hitSound.play(); // make a hit sound if strawberry gets you
+                if(healthCounter > 0){
+                    healthCounter -= 1;
+                }
+
+//                heartSprites.removeIndex(heartSprites.size - 1);
             }
         }
 
         strawberryTimer += delta; // Adds the current delta to the timer
-        if (strawberryTimer > 1f) { // Check if it has been more than a second
+        if (strawberryTimer > 0.6f) { // Check if it has been more than .6 seconds
             strawberryTimer = 0; // Reset the timer
             createStrawberry(); // Create the strawberry
         }
+
+        createHearts();
     }
 
     private void draw() {
@@ -155,6 +171,11 @@ public class GameScreen implements Screen {
         // draw each strawberry sprite
         for (Sprite strawberrySprite : strawberrySprites) {
             strawberrySprite.draw(game.batch);
+        }
+
+        // draw each heart sprite
+        for (Sprite heartSprite : heartSprites) {
+            heartSprite.draw(game.batch);
         }
 
         game.batch.end();
@@ -202,6 +223,26 @@ public class GameScreen implements Screen {
         // track 3: 5.85f
         // track 4: 7.1f
         // track 5: 8.3f
+    }
+
+    private void createHearts(){
+        // reset hearts array
+        heartSprites.clear();
+
+        // create local variables for convenience
+        float worldWidth = game.viewport.getWorldWidth();
+        float worldHeight = game.viewport.getWorldHeight();
+        float heartWidth = 1;
+        float heartHeight = 1;
+
+        for(int i = 0; i < healthCounter; i++){
+            Sprite heartSprite = new Sprite(heartTexture);
+            heartSprite.setSize(heartWidth, heartHeight);
+            heartSprite.setX(i);
+            heartSprite.setY(worldHeight - heartHeight);
+            heartSprites.add(heartSprite);
+        }
+
     }
 
 
