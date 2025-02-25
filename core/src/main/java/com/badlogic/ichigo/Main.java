@@ -3,11 +3,14 @@ package com.badlogic.ichigo;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -18,7 +21,8 @@ public class Main implements ApplicationListener {
     Texture backgroundTexture;
     Texture runnerTexture;
     Texture strawberryTexture;
-
+    Sound hitSound;
+    Music runningMusic;
     Sprite runnerSprite;
     SpriteBatch spriteBatch;
     FitViewport viewport;
@@ -29,6 +33,9 @@ public class Main implements ApplicationListener {
 
     float strawberryTimer;
 
+    Rectangle runnerRectangle;
+    Rectangle strawberryRectangle;
+
     @Override
     public void create() {
         // Prepare your application here.
@@ -36,7 +43,8 @@ public class Main implements ApplicationListener {
         backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         runnerTexture = new Texture("runner.png");
         strawberryTexture = new Texture("strawberry.png");
-
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("punch-2-37333.mp3"));
+        runningMusic = Gdx.audio.newMusic(Gdx.files.internal("running-in-the-90s.mp3"));
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(16, 10);
 
@@ -47,6 +55,13 @@ public class Main implements ApplicationListener {
         touchPos = new Vector2();
 
         strawberrySprites = new Array<>();
+
+        runnerRectangle = new Rectangle();
+        strawberryRectangle = new Rectangle();
+
+        runningMusic.setLooping(true);
+        runningMusic.setVolume(.5f);
+        runningMusic.play();
 
     }
 
@@ -97,6 +112,9 @@ public class Main implements ApplicationListener {
 
         float delta = Gdx.graphics.getDeltaTime(); // retrieve the current delta
 
+        // apply runner position and size to runner rectangle (hit box)
+        runnerRectangle.set(runnerSprite.getX(), runnerSprite.getY(), runnerWidth, runnerHeight);
+
         // loop through each strawberry
         // Loop through the sprites backwards to prevent out of bounds errors
         for (int i = strawberrySprites.size - 1; i >= 0; i--) {
@@ -106,8 +124,17 @@ public class Main implements ApplicationListener {
 
             strawberrySprite.translateX(-2f * delta);
 
+            // apply strawberry position and size to strawberry rectangle (hit box)
+            strawberryRectangle.set(strawberrySprite.getX(), strawberrySprite.getY(), strawberryWidth, strawberryHeight);
+
+
+
             // if the top of the drop goes below the bottom of the view, remove it
             if (strawberrySprite.getX() < -strawberryWidth) strawberrySprites.removeIndex(i);
+            else if (runnerRectangle.overlaps(strawberryRectangle)) { // Check if the bucket overlaps the drop
+                strawberrySprites.removeIndex(i); // Remove the drop
+                hitSound.play(); // make a hit sound if strawberry gets you
+            }
         }
 
         strawberryTimer += delta; // Adds the current delta to the timer
