@@ -42,8 +42,9 @@ public class GameOverScreen implements Screen {
         game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight); // draw the background
 
         //draw text. Remember that x and y are in meters
-        game.font.draw(game.batch, "Game Over :( !!! ", 1, 1.5f);
-        game.font.draw(game.batch, "Tap to try again!", 1, 1);
+        game.font.getData().setScale(0.04f);
+        game.font.draw(game.batch, "Game Over :( !!! ", (worldWidth / 2) - 2.1f, (worldHeight / 2) - 1.5f);
+        game.font.draw(game.batch, "Tap to try again!", (worldWidth / 2) - 2.1f, 2);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {

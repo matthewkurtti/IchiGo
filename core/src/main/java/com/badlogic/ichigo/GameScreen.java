@@ -194,7 +194,7 @@ public class GameScreen implements Screen {
         int ranNum = MathUtils.random(1, 5);
         float strawberryLocation = 3.5f;
 
-        switch (ranNum){
+        switch (ranNum){ // each case corresponds to a lane on the track
             case 1:
                 strawberryLocation = 3.5f;
                 break;
@@ -219,12 +219,7 @@ public class GameScreen implements Screen {
         strawberrySprite.setY(worldHeight - strawberryHeight - strawberryLocation);
         strawberrySprites.add(strawberrySprite);
 
-        // strawberry locations:
-        // top track: 3.5f
-        // track 2: 4.6f
-        // track 3: 5.85f
-        // track 4: 7.1f
-        // track 5: 8.3f
+
     }
 
     private void createHearts(){

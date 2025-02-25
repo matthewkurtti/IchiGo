@@ -46,8 +46,9 @@ public class MainMenuScreen implements Screen {
         game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight); // draw the background
 
         //draw text. Remember that x and y are in meters
-        game.font.draw(game.batch, "Let's Ichi Gooooo!!! ", worldWidth / 2, 1.5f);
-        game.font.draw(game.batch, "Tap anywhere to begin!", worldWidth / 2, 1);
+        game.font.getData().setScale(0.04f);
+        game.font.draw(game.batch, "Let's Ichi Gooooo!!! ", (worldWidth / 2) - 2.3f, worldHeight -1.5f);
+        game.font.draw(game.batch, "Tap anywhere to begin!", worldWidth / 2 - 3, 1.5f);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
