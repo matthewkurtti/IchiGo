@@ -48,9 +48,9 @@ public class GameScreen implements Screen {
 
         // load hit sound effect and background music
         hitSound = Gdx.audio.newSound(Gdx.files.internal("punch-2-37333.mp3"));
-        runningMusic = Gdx.audio.newMusic(Gdx.files.internal("running-in-the-90s.mp3"));
+        runningMusic = Gdx.audio.newMusic(Gdx.files.internal("deja-vu-middle.mp3"));
         runningMusic.setLooping(true);
-        runningMusic.setVolume(.5f);
+        runningMusic.setVolume(2);
 
         runnerSprite = new Sprite(runnerTexture); // Initialize the sprite based on the texture
         runnerSprite.setSize(1, 1); // Define the size of the sprite
@@ -112,7 +112,7 @@ public class GameScreen implements Screen {
         float runnerWidth = runnerSprite.getWidth();
         float runnerHeight = runnerSprite.getHeight();
 
-        // Clamp y to values between the race tracks
+        // Clamp y to values between the racetracks
         runnerSprite.setY(MathUtils.clamp(runnerSprite.getY(), 0.7f, worldHeight - runnerHeight - 3.5f));
 
         // clamp x to values on the screen

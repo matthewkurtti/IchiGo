@@ -11,7 +11,7 @@ public class MainMenuScreen implements Screen {
 
     final Ichigo game;
 
-    Music dejaVu;
+    Music backgroundMusic;
 
     Texture backgroundTexture;
 
@@ -19,9 +19,8 @@ public class MainMenuScreen implements Screen {
         this.game = game;
 
         // init music
-        dejaVu = Gdx.audio.newMusic(Gdx.files.internal("deja-vu.mp3"));
-        dejaVu.setLooping(true);
-        dejaVu.setVolume(.5f);
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("deja-vu-beginning.mp3"));
+        backgroundMusic.setVolume(1);
 
         // init texture
         backgroundTexture = new Texture("dramatic-runner.png");
@@ -29,7 +28,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        dejaVu.play();
+        backgroundMusic.play();
     }
 
     @Override
@@ -79,6 +78,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        dejaVu.dispose();
+        backgroundMusic.dispose();
     }
 }
