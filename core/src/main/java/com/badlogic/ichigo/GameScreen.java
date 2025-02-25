@@ -73,6 +73,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float v) {
+        if(healthCounter == 0){
+            game.setScreen(new GameOverScreen(game)); // game over :(
+            dispose();
+        }
         input();
         logic();
         draw();
@@ -139,10 +143,8 @@ public class GameScreen implements Screen {
                 strawberrySprites.removeIndex(i); // Remove the strawberry
                 hitSound.play(); // make a hit sound if strawberry gets you
                 if(healthCounter > 0){
-                    healthCounter -= 1;
+                    healthCounter -= 1; // if player has health, subtract one heart
                 }
-
-//                heartSprites.removeIndex(heartSprites.size - 1);
             }
         }
 
