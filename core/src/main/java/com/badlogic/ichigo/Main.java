@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -16,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main implements ApplicationListener {
     Texture backgroundTexture;
     Texture runnerTexture;
+    Texture strawberryTexture;
 
     Sprite runnerSprite;
     SpriteBatch spriteBatch;
@@ -23,6 +25,9 @@ public class Main implements ApplicationListener {
 
     Vector2 touchPos;
 
+    Array<Sprite> strawberrySprites;
+
+    float strawberryTimer;
 
     @Override
     public void create() {
@@ -30,6 +35,7 @@ public class Main implements ApplicationListener {
         backgroundTexture = new Texture("running-track.jpg");
         backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         runnerTexture = new Texture("runner.png");
+        strawberryTexture = new Texture("strawberry.png");
 
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(16, 10);
@@ -39,6 +45,9 @@ public class Main implements ApplicationListener {
         runnerSprite.setPosition(0, 0.7f);
 
         touchPos = new Vector2();
+
+        strawberrySprites = new Array<>();
+
     }
 
     @Override
@@ -85,6 +94,28 @@ public class Main implements ApplicationListener {
 
         // Clamp x to values between 0 and worldWidth
         runnerSprite.setY(MathUtils.clamp(runnerSprite.getY(), 0.7f, worldHeight - runnerHeight - 3.5f)); // 3.5f added to keep runner on track
+
+        float delta = Gdx.graphics.getDeltaTime(); // retrieve the current delta
+
+        // loop through each strawberry
+        // Loop through the sprites backwards to prevent out of bounds errors
+        for (int i = strawberrySprites.size - 1; i >= 0; i--) {
+            Sprite strawberrySprite = strawberrySprites.get(i); // Get the sprite from the list
+            float strawberryWidth = strawberrySprite.getWidth();
+            float strawberryHeight = strawberrySprite.getHeight();
+
+            strawberrySprite.translateX(-2f * delta);
+
+            // if the top of the drop goes below the bottom of the view, remove it
+            if (strawberrySprite.getX() < -strawberryWidth) strawberrySprites.removeIndex(i);
+        }
+
+        strawberryTimer += delta; // Adds the current delta to the timer
+        if (strawberryTimer > 1f) { // Check if it has been more than a second
+            strawberryTimer = 0; // Reset the timer
+            createStrawberry(); // Create the strawberry
+        }
+
     }
 
     private void draw() {
@@ -100,7 +131,56 @@ public class Main implements ApplicationListener {
         spriteBatch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight); // draw the background
         runnerSprite.draw(spriteBatch); // draw the runner sprite
 
+        // draw each strawberry sprite
+        for (Sprite strawberrySprite : strawberrySprites) {
+            strawberrySprite.draw(spriteBatch);
+        }
+
         spriteBatch.end();
+    }
+
+    private void createStrawberry() {
+        // create local variables for convenience
+        float strawberryWidth = 1.5f;
+        float strawberryHeight = 1;
+        float worldWidth = viewport.getWorldWidth();
+        float worldHeight = viewport.getWorldHeight();
+
+        // use random num to determine strawberry location
+        int ranNum = MathUtils.random(1, 5);
+        float strawberryLocation = 3.5f;
+
+        switch (ranNum){
+            case 1:
+                strawberryLocation = 3.5f;
+                break;
+            case 2:
+                strawberryLocation = 4.6f;
+                break;
+            case 3:
+                strawberryLocation = 5.85f;
+                break;
+            case 4:
+                strawberryLocation = 7.1f;
+                break;
+            case 5:
+                strawberryLocation = 8.3f;
+                break;
+        }
+
+        // create strawberry sprite
+        Sprite strawberrySprite = new Sprite(strawberryTexture);
+        strawberrySprite.setSize(strawberryWidth, strawberryHeight);
+        strawberrySprite.setX(worldWidth - strawberryWidth);
+        strawberrySprite.setY(worldHeight - strawberryHeight - strawberryLocation);
+        strawberrySprites.add(strawberrySprite);
+
+        // strawberry locations:
+        // top track: 3.5f
+        // track 2: 4.6f
+        // track 3: 5.85f
+        // track 4: 7.1f
+        // track 5: 8.3f
     }
 
     @Override
