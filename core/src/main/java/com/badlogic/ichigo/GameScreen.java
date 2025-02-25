@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-//        runningMusic.play();
+        runningMusic.play();
     }
 
     @Override

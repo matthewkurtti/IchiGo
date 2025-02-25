@@ -2,20 +2,34 @@ package com.badlogic.ichigo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenuScreen implements Screen {
 
     final Ichigo game;
 
+    Music dejaVu;
+
+    Texture backgroundTexture;
+
     public MainMenuScreen(final Ichigo game) {
         this.game = game;
+
+        // init music
+        dejaVu = Gdx.audio.newMusic(Gdx.files.internal("deja-vu.mp3"));
+        dejaVu.setLooping(true);
+        dejaVu.setVolume(.5f);
+
+        // init texture
+        backgroundTexture = new Texture("dramatic-runner.png");
     }
 
     @Override
     public void show() {
-
+        dejaVu.play();
     }
 
     @Override
@@ -26,9 +40,14 @@ public class MainMenuScreen implements Screen {
         game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
 
         game.batch.begin();
+        // draw background
+        float worldWidth = game.viewport.getWorldWidth();
+        float worldHeight = game.viewport.getWorldHeight();
+        game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight); // draw the background
+
         //draw text. Remember that x and y are in meters
-        game.font.draw(game.batch, "Let's Ichi Gooooo!!! ", 1, 1.5f);
-        game.font.draw(game.batch, "Tap anywhere to begin!", 1, 1);
+        game.font.draw(game.batch, "Let's Ichi Gooooo!!! ", worldWidth / 2, 1.5f);
+        game.font.draw(game.batch, "Tap anywhere to begin!", worldWidth / 2, 1);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
@@ -59,6 +78,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        dejaVu.dispose();
     }
 }
