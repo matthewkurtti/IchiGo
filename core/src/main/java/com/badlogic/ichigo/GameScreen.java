@@ -42,14 +42,19 @@ public class GameScreen implements Screen {
     Rectangle enemyRectangle;
     Rectangle strawberryRectangle;
 
+    long startTime;
+    long secondsDisplay;
+    long minutesDisplay;
+
+
     public GameScreen(final Ichigo game){
         this.game = game;
 
         // load images for the background, runner and strawberry
-        backgroundTexture = new Texture("running-track-no-audience.jpg");
+        backgroundTexture = new Texture("running-track-no-audience.JPG");
         backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         runnerTexture = new Texture("main-char.png");
-        enemyTexture = new Texture("runner.png");
+        enemyTexture = new Texture("runner.PNG");
         heartTexture = new Texture("strawberry.png");
 
         // load hit sound effect and background music
@@ -75,6 +80,8 @@ public class GameScreen implements Screen {
         healthCounter = 5;
         score = 0;
         enemyAcc = -2f;
+
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -198,6 +205,11 @@ public class GameScreen implements Screen {
         }
 
         createHearts();
+
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        long elapsedSeconds = elapsedTime / 1000;
+        secondsDisplay = elapsedSeconds % 60;
+        minutesDisplay = secondsDisplay / 60;
     }
 
     private void draw() {
@@ -229,9 +241,10 @@ public class GameScreen implements Screen {
         }
 
         // write score in top right of screen
-        String scoreStr = "Score: " + Integer.toString(score);
+//        String scoreStr = "Score: " + Integer.toString(score);
+        String time = "0:0" + Long.toString(minutesDisplay) + ":" + Long.toString(secondsDisplay);
         game.font.getData().setScale(0.04f);
-        game.font.draw(game.batch, scoreStr, worldWidth - 2.3f, worldHeight -0.4f);
+        game.font.draw(game.batch, time, worldWidth - 2.3f, worldHeight -0.4f);
 
         game.batch.end();
     }

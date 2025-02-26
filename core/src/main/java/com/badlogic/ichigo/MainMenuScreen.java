@@ -20,7 +20,7 @@ public class MainMenuScreen implements Screen {
 
         // init music
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("deja-vu-beginning.mp3"));
-        backgroundMusic.setVolume(1);
+        backgroundMusic.setVolume(2);
 
         // init texture
         backgroundTexture = new Texture("dramatic-runner.png");
@@ -79,5 +79,6 @@ public class MainMenuScreen implements Screen {
     @Override
     public void dispose() {
         backgroundMusic.dispose();
+        backgroundTexture.dispose();
     }
 }
