@@ -8,16 +8,20 @@ A game where you are so excited to eat strawberries that you just keep running f
 
 ### Using JAR file
 
-You can play the game by running the JAR file located in 
+You can play the game by downloading and running the JAR file located in 
 ```
 Deployments/
 ```
 
-You will need to have JVM on your computer to run this file. 
+You will also need to have JVM on your computer to run this file. 
 
 ### Running the lwjgl3Launcher in a dev environment
 
-Download the IchiGo repo and set up a dev environment (for ex, with IntelliJ)
+Download the IchiGo repo and set up a dev environment (for ex, with IntelliJ). Then, run the lwjgl3Launcher located in
+
+```
+lwjgl3/src/main/java/com.badlogic.ichigo.lwjgl3/
+```
 
 Other ways of playing the game are in progress
 
