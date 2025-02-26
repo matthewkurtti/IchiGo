@@ -20,13 +20,14 @@ public class GameScreen implements Screen {
     Texture backgroundTexture;
     Texture runnerTexture;
     Texture enemyTexture;
-//    Texture strawberryTexture;
     Texture heartTexture;
     Sound hitSound;
     Sound biteSound;
     Music runningMusic;
     Sprite runnerSprite;
     int healthCounter;
+    int score;
+    float enemyAcc;
 
     Vector2 touchPos;
 
@@ -52,7 +53,7 @@ public class GameScreen implements Screen {
         heartTexture = new Texture("strawberry.png");
 
         // load hit sound effect and background music
-        hitSound = Gdx.audio.newSound(Gdx.files.internal("punch-2-37333.mp3"));
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("hit.mp3"));
         biteSound = Gdx.audio.newSound(Gdx.files.internal("bite.mp3"));
         runningMusic = Gdx.audio.newMusic(Gdx.files.internal("deja-vu-middle.mp3"));
         runningMusic.setLooping(true);
@@ -72,6 +73,8 @@ public class GameScreen implements Screen {
         strawberrySprites = new Array<>();
         heartSprites = new Array<>();
         healthCounter = 5;
+        score = 0;
+        enemyAcc = -2f;
     }
 
     @Override
@@ -128,6 +131,9 @@ public class GameScreen implements Screen {
 
         float delta = Gdx.graphics.getDeltaTime(); // retrieve the current delta
 
+        // increase enemy acc
+        enemyAcc -= 0.01f;
+
         // apply runner position and size to runner rectangle (hit box)
         runnerRectangle.set(runnerSprite.getX(), runnerSprite.getY(), runnerWidth, runnerHeight);
 
@@ -139,7 +145,7 @@ public class GameScreen implements Screen {
             float enemyHeight = enemySprite.getHeight();
 
 
-            enemySprite.translateX(-4f * delta);
+            enemySprite.translateX(enemyAcc * delta);
 
             // apply strawberry position and size to strawberry rectangle (hit box)
             enemyRectangle.set(enemySprite.getX(), enemySprite.getY(), enemyWidth, enemyHeight);
@@ -175,11 +181,12 @@ public class GameScreen implements Screen {
                 if(healthCounter < 5){
                     healthCounter += 1;
                 }
+                score += 1;
             }
         }
 
         enemyTimer += delta; // Adds the current delta to the timer
-        if (enemyTimer > 0.6f) { // Check if it has been more than .6 seconds
+        if (enemyTimer > 0.5f) { // Check if it has been more than .6 seconds
             enemyTimer = 0; // Reset the timer
             createEnemy(); // Create the enemy
         }
@@ -220,6 +227,11 @@ public class GameScreen implements Screen {
         for (Sprite heartSprite : heartSprites) {
             heartSprite.draw(game.batch);
         }
+
+        // write score in top right of screen
+        String scoreStr = "Score: " + Integer.toString(score);
+        game.font.getData().setScale(0.04f);
+        game.font.draw(game.batch, scoreStr, worldWidth - 2.3f, worldHeight -2.5f);
 
         game.batch.end();
     }
@@ -314,7 +326,7 @@ public class GameScreen implements Screen {
             Sprite heartSprite = new Sprite(heartTexture);
             heartSprite.setSize(heartWidth, heartHeight);
             heartSprite.setX(i);
-            heartSprite.setY(worldHeight - heartHeight);
+            heartSprite.setY(worldHeight -3.25f);
             heartSprites.add(heartSprite);
         }
 
