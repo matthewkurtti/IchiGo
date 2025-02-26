@@ -35,7 +35,7 @@ https://libgdx.com/wiki/
 All of the core classes to make this specific game work are located in
 
 ```
-core/src/main/java/com.badlogic.ichigo
+core/src/main/java/com.badlogic.ichigo/
 ```
 
 ## Setup
