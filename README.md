@@ -10,7 +10,7 @@ A game where you are so excited to eat strawberries that you just keep running f
 
 You can play the game by running the JAR file located in 
 ```
-lwjgl3/build/libs
+Deployments/
 ```
 
 You will need to have JVM on your computer to run this file. Other ways of playing the game are in progress
