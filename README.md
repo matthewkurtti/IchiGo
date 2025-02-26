@@ -32,6 +32,12 @@ The game is programmed in Java and utilizes the LibGDX game libary. Find their w
 
 https://libgdx.com/wiki/
 
+All of the core classes to make this specific game work are located in
+
+```
+core/src/main/java/com.badlogic.ichigo
+```
+
 ## Setup
 
 To setup a local dev environement for Ichigo, follow these steps:
