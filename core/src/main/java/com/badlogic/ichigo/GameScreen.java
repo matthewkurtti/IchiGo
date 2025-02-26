@@ -20,9 +20,10 @@ public class GameScreen implements Screen {
     Texture backgroundTexture;
     Texture runnerTexture;
     Texture enemyTexture;
-    Texture strawberryTexture;
+//    Texture strawberryTexture;
     Texture heartTexture;
     Sound hitSound;
+    Sound biteSound;
     Music runningMusic;
     Sprite runnerSprite;
     int healthCounter;
@@ -31,11 +32,14 @@ public class GameScreen implements Screen {
 
     Array<Sprite> enemySprites;
     Array<Sprite> heartSprites;
+    Array<Sprite> strawberrySprites;
 
     float enemyTimer;
+    float strawberryTimer;
 
     Rectangle runnerRectangle;
     Rectangle enemyRectangle;
+    Rectangle strawberryRectangle;
 
     public GameScreen(final Ichigo game){
         this.game = game;
@@ -45,10 +49,11 @@ public class GameScreen implements Screen {
         backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         runnerTexture = new Texture("main-char.png");
         enemyTexture = new Texture("runner.png");
-        heartTexture = new Texture("heart.png");
+        heartTexture = new Texture("strawberry.png");
 
         // load hit sound effect and background music
         hitSound = Gdx.audio.newSound(Gdx.files.internal("punch-2-37333.mp3"));
+        biteSound = Gdx.audio.newSound(Gdx.files.internal("bite.mp3"));
         runningMusic = Gdx.audio.newMusic(Gdx.files.internal("deja-vu-middle.mp3"));
         runningMusic.setLooping(true);
         runningMusic.setVolume(2);
@@ -61,8 +66,10 @@ public class GameScreen implements Screen {
 
         runnerRectangle = new Rectangle();
         enemyRectangle = new Rectangle();
+        strawberryRectangle = new Rectangle();
 
         enemySprites = new Array<>();
+        strawberrySprites = new Array<>();
         heartSprites = new Array<>();
         healthCounter = 5;
     }
@@ -124,19 +131,18 @@ public class GameScreen implements Screen {
         // apply runner position and size to runner rectangle (hit box)
         runnerRectangle.set(runnerSprite.getX(), runnerSprite.getY(), runnerWidth, runnerHeight);
 
-        // loop through each strawberry
+        // loop through each enemy
         // Loop through the sprites backwards to prevent out of bounds errors
         for (int i = enemySprites.size - 1; i >= 0; i--) {
             Sprite enemySprite = enemySprites.get(i); // Get the sprite from the list
             float enemyWidth = enemySprite.getWidth();
             float enemyHeight = enemySprite.getHeight();
 
+
             enemySprite.translateX(-4f * delta);
 
             // apply strawberry position and size to strawberry rectangle (hit box)
             enemyRectangle.set(enemySprite.getX(), enemySprite.getY(), enemyWidth, enemyHeight);
-
-
 
             // if the right of the enemy goes off screen, remove it
             if (enemySprite.getX() < -enemyWidth) enemySprites.removeIndex(i);
@@ -149,10 +155,39 @@ public class GameScreen implements Screen {
             }
         }
 
+        // loop through each strawberry
+        // Loop through the sprites backwards to prevent out of bounds errors
+        for (int i = strawberrySprites.size - 1; i >= 0; i--) {
+            Sprite strawberrySprite = strawberrySprites.get(i); // Get the sprite from the list
+            float strawberryWidth = strawberrySprite.getWidth();
+            float strawberryHeight = strawberrySprite.getHeight();
+
+            strawberrySprite.translateX(-4f * delta);
+
+            // apply strawberry position and size to strawberry rectangle (hit box)
+            strawberryRectangle.set(strawberrySprite.getX(), strawberrySprite.getY(), strawberryWidth, strawberryHeight);
+
+            // if the right of the enemy goes off screen, remove it
+            if (strawberrySprite.getX() < -strawberryWidth) strawberrySprites.removeIndex(i);
+            else if (runnerRectangle.overlaps(strawberryRectangle)) { // Check if the runner overlaps the enemy
+                strawberrySprites.removeIndex(i); // Remove the enemy
+                biteSound.play(); // make a hit sound if strawberry gets you
+                if(healthCounter < 5){
+                    healthCounter += 1;
+                }
+            }
+        }
+
         enemyTimer += delta; // Adds the current delta to the timer
         if (enemyTimer > 0.6f) { // Check if it has been more than .6 seconds
             enemyTimer = 0; // Reset the timer
             createEnemy(); // Create the enemy
+        }
+
+        strawberryTimer += delta; // Adds the current delta to the timer
+        if (strawberryTimer > 6) { // Check if it has been more than .6 seconds
+            strawberryTimer = 0; // Reset the timer
+            createStrawberry(); // Create the enemy
         }
 
         createHearts();
@@ -171,9 +206,14 @@ public class GameScreen implements Screen {
         game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight); // draw the background
         runnerSprite.draw(game.batch); // draw the runner sprite
 
-        // draw each strawberry sprite
+        // draw each enemy sprite
         for (Sprite enemySprite : enemySprites) {
             enemySprite.draw(game.batch);
+        }
+
+        // draw each strawberry sprite
+        for (Sprite strawberrySprite : strawberrySprites) {
+            strawberrySprite.draw(game.batch);
         }
 
         // draw each heart sprite
@@ -224,7 +264,40 @@ public class GameScreen implements Screen {
     }
 
     private void createStrawberry() {
+        // create local variables for convenience
+        float strawberryWidth = 1;
+        float strawberryHeight = 1;
+        float worldWidth = game.viewport.getWorldWidth();
+        float worldHeight = game.viewport.getWorldHeight();
 
+        // use random num to determine strawberry location
+        int ranNum = MathUtils.random(1, 5);
+        float strawberryLocation = 3.5f;
+
+        switch (ranNum){ // each case corresponds to a lane on the track
+            case 1:
+                strawberryLocation = 3.5f;
+                break;
+            case 2:
+                strawberryLocation = 4.6f;
+                break;
+            case 3:
+                strawberryLocation = 5.85f;
+                break;
+            case 4:
+                strawberryLocation = 7.1f;
+                break;
+            case 5:
+                strawberryLocation = 8.3f;
+                break;
+        }
+
+        // create strawberry sprite
+        Sprite strawberrySprite = new Sprite(heartTexture);
+        strawberrySprite.setSize(strawberryWidth, strawberryHeight);
+        strawberrySprite.setX(worldWidth - strawberryWidth);
+        strawberrySprite.setY(worldHeight - strawberryHeight - strawberryLocation);
+        strawberrySprites.add(strawberrySprite);
     }
 
     private void createHearts(){
@@ -275,5 +348,6 @@ public class GameScreen implements Screen {
         runningMusic.dispose();
         enemyTexture.dispose();
         runnerTexture.dispose();
+        heartTexture.dispose();
     }
 }
