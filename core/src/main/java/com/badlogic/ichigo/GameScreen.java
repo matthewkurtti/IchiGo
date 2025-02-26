@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
         this.game = game;
 
         // load images for the background, runner and strawberry
-        backgroundTexture = new Texture("running-track.jpg");
+        backgroundTexture = new Texture("running-track-no-audience.jpg");
         backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         runnerTexture = new Texture("main-char.png");
         enemyTexture = new Texture("runner.png");
@@ -61,7 +61,7 @@ public class GameScreen implements Screen {
 
         runnerSprite = new Sprite(runnerTexture); // Initialize the sprite based on the texture
         runnerSprite.setSize(1, 1); // Define the size of the sprite
-        runnerSprite.setPosition(0, 0.7f);
+        runnerSprite.setPosition(0, 1.2f);  // new track positions:
 
         touchPos = new Vector2();
 
@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
         float runnerHeight = runnerSprite.getHeight();
 
         // Clamp y to values between the racetracks
-        runnerSprite.setY(MathUtils.clamp(runnerSprite.getY(), 0.7f, worldHeight - runnerHeight - 3.5f));
+        runnerSprite.setY(MathUtils.clamp(runnerSprite.getY(), 0.9f, worldHeight - runnerHeight - 1.5f));
 
         // clamp x to values on the screen
         runnerSprite.setX(MathUtils.clamp(runnerSprite.getX(), 0, worldWidth - runnerWidth));
@@ -186,13 +186,13 @@ public class GameScreen implements Screen {
         }
 
         enemyTimer += delta; // Adds the current delta to the timer
-        if (enemyTimer > 0.5f) { // Check if it has been more than .6 seconds
+        if (enemyTimer > 0.5) { // Check if it has been more than .6 seconds
             enemyTimer = 0; // Reset the timer
             createEnemy(); // Create the enemy
         }
 
         strawberryTimer += delta; // Adds the current delta to the timer
-        if (strawberryTimer > 6) { // Check if it has been more than .6 seconds
+        if (strawberryTimer > 5) { // Check if it has been more than .6 seconds
             strawberryTimer = 0; // Reset the timer
             createStrawberry(); // Create the enemy
         }
@@ -231,7 +231,7 @@ public class GameScreen implements Screen {
         // write score in top right of screen
         String scoreStr = "Score: " + Integer.toString(score);
         game.font.getData().setScale(0.04f);
-        game.font.draw(game.batch, scoreStr, worldWidth - 2.3f, worldHeight -2.5f);
+        game.font.draw(game.batch, scoreStr, worldWidth - 2.3f, worldHeight -0.4f);
 
         game.batch.end();
     }
@@ -249,19 +249,19 @@ public class GameScreen implements Screen {
 
         switch (ranNum){ // each case corresponds to a lane on the track
             case 1:
-                enemyLocation = 3.5f;
+                enemyLocation = 1.7f;
                 break;
             case 2:
-                enemyLocation = 4.6f;
+                enemyLocation = 3.2f; // old num: 4.6f
                 break;
             case 3:
-                enemyLocation = 5.85f;
+                enemyLocation = 4.8f; // old num: 5.85f
                 break;
             case 4:
-                enemyLocation = 7.1f;
+                enemyLocation = 6.4f; // old num: 7.1f
                 break;
             case 5:
-                enemyLocation = 8.3f;
+                enemyLocation = 7.9f; // old num: 8.3f
                 break;
         }
 
@@ -284,23 +284,23 @@ public class GameScreen implements Screen {
 
         // use random num to determine strawberry location
         int ranNum = MathUtils.random(1, 5);
-        float strawberryLocation = 3.5f;
+        float strawberryLocation = 1.7f;
 
         switch (ranNum){ // each case corresponds to a lane on the track
             case 1:
-                strawberryLocation = 3.5f;
+                strawberryLocation = 1.7f;
                 break;
             case 2:
-                strawberryLocation = 4.6f;
+                strawberryLocation = 3.2f;
                 break;
             case 3:
-                strawberryLocation = 5.85f;
+                strawberryLocation = 4.8f;
                 break;
             case 4:
-                strawberryLocation = 7.1f;
+                strawberryLocation = 6.4f;
                 break;
             case 5:
-                strawberryLocation = 8.3f;
+                strawberryLocation = 7.9f;
                 break;
         }
 
@@ -326,7 +326,7 @@ public class GameScreen implements Screen {
             Sprite heartSprite = new Sprite(heartTexture);
             heartSprite.setSize(heartWidth, heartHeight);
             heartSprite.setX(i);
-            heartSprite.setY(worldHeight -3.25f);
+            heartSprite.setY(worldHeight -1.1f);
             heartSprites.add(heartSprite);
         }
 
