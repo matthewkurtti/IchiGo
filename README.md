@@ -13,7 +13,13 @@ You can play the game by running the JAR file located in
 Deployments/
 ```
 
-You will need to have JVM on your computer to run this file. Other ways of playing the game are in progress
+You will need to have JVM on your computer to run this file. 
+
+### Running the lwjgl3Launcher in a dev environment
+
+Download the IchiGo repo and set up a dev environment (for ex, with IntelliJ)
+
+Other ways of playing the game are in progress
 
 ## Setup
 
