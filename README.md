@@ -26,7 +26,7 @@ lwjgl3/src/main/java/com.badlogic.ichigo.lwjgl3/
 Other ways of playing the game are in progress
 
 
-### Making of the game
+## Making of the game
 
 The game is programmed in Java and utilizes the LibGDX game libary. Find their wiki here:
 
@@ -38,6 +38,4 @@ All of the core classes to make this specific game work are located in
 core/src/main/java/com.badlogic.ichigo/
 ```
 
-## Setup
 
-To setup a local dev environement for Ichigo, follow these steps:
