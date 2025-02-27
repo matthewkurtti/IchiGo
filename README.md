@@ -28,7 +28,7 @@ Other ways of playing the game are in progress
 
 ## Making of the game
 
-The game is programmed in Java and utilizes the LibGDX game libary. Find their wiki here:
+The game is programmed in Java and utilizes the LibGDX game framework. Find their wiki here:
 
 https://libgdx.com/wiki/
 
