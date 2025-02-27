@@ -30,6 +30,7 @@ public class GameScreen implements Screen {
     float enemyAcc;
 
     Vector2 touchPos;
+    Vector2 mousePos;
 
     Array<Sprite> enemySprites;
     Array<Sprite> heartSprites;
@@ -69,6 +70,7 @@ public class GameScreen implements Screen {
         runnerSprite.setPosition(0, 1.2f);  // new track positions:
 
         touchPos = new Vector2();
+        mousePos = new Vector2();
 
         runnerRectangle = new Rectangle();
         enemyRectangle = new Rectangle();
@@ -104,21 +106,33 @@ public class GameScreen implements Screen {
         float speed = 7f;
         float delta = Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            runnerSprite.translateY(speed * delta); // move the runner up
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            runnerSprite.translateY(-speed * delta); // move the runner down
-        }else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            runnerSprite.translateX(-speed * delta); // move the runner left
-        }else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            runnerSprite.translateX(speed * delta); // move the runner right
-        }
+        // optional: can make input from keys on keyboard instead
+//        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+//            runnerSprite.translateY(speed * delta); // move the runner up
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+//            runnerSprite.translateY(-speed * delta); // move the runner down
+//        }else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+//            runnerSprite.translateX(-speed * delta); // move the runner left
+//        }else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+//            runnerSprite.translateX(speed * delta); // move the runner right
+//        }
 
+        // location by clicking
         if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY()); // Get where the touch happened on screen
             game.viewport.unproject(touchPos); // Convert the units to the world units of the viewport
             runnerSprite.setCenterY(touchPos.y); // Change the horizontally centered position of the bucket
+            runnerSprite.setCenterX(touchPos.x);
         }
+
+        // move based on cursor on screen
+        float xPos = Gdx.input.getX();
+        float yPos = Gdx.input.getY();
+
+        mousePos.set(xPos, yPos);
+        game.viewport.unproject(mousePos);
+        runnerSprite.setCenterX(mousePos.x);
+        runnerSprite.setCenterY(mousePos.y);
     }
 
     private void logic() {
@@ -139,7 +153,7 @@ public class GameScreen implements Screen {
         float delta = Gdx.graphics.getDeltaTime(); // retrieve the current delta
 
         // increase enemy acc
-        enemyAcc -= 0.01f;
+        enemyAcc -= 0.03f;
 
         // apply runner position and size to runner rectangle (hit box)
         runnerRectangle.set(runnerSprite.getX(), runnerSprite.getY(), runnerWidth, runnerHeight);
